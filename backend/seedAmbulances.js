@@ -3,38 +3,50 @@ const Ambulance = require('./models/Ambulance');
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://hospital_user:Zd35eWE4go0KiEAZ@cluster0.ezc39kq.mongodb.net/hospital-sync?retryWrites=true&w=majority&appName=Cluster0';
 
-// Mumbai center coordinates for realistic ambulance placement
-const MUMBAI_CENTER = { lat: 19.0760, lng: 72.8777 };
+// Multiple city centers for better coverage
+const CITY_CENTERS = [
+  { lat: 19.0760, lng: 72.8777, name: 'Mumbai' },
+  { lat: 28.6139, lng: 77.2090, name: 'Delhi' },
+  { lat: 12.9716, lng: 77.5946, name: 'Bangalore' },
+  { lat: 22.5726, lng: 88.3639, name: 'Kolkata' },
+  { lat: 13.0827, lng: 80.2707, name: 'Chennai' }
+];
 
 /**
- * Generate random ambulance data in Mumbai area
- * Ambulances are scattered around Mumbai with most being AVAILABLE
+ * Generate random ambulance data across major Indian cities
+ * Ambulances are scattered around multiple cities for better coverage
  */
 function generateAmbulances() {
   const ambulances = [];
+  let ambulanceId = 1;
   
-  // Create 10 ambulances scattered around Mumbai
-  for (let i = 1; i <= 10; i++) {
-    // Spread ambulances in a ~20km radius around Mumbai center
-    const angle = (i * 36) * (Math.PI / 180); // Distribute in a circle
-    const radius = 0.05 + Math.random() * 0.15; // 0.05 to 0.2 degrees (~5-20km)
-    
-    const latitude = MUMBAI_CENTER.lat + radius * Math.cos(angle) + (Math.random() - 0.5) * 0.05;
-    const longitude = MUMBAI_CENTER.lng + radius * Math.sin(angle) + (Math.random() - 0.5) * 0.05;
-    
-    // Most ambulances are available, but 1-2 might be busy
-    const status = i <= 8 ? 'AVAILABLE' : 'BUSY';
-    
-    ambulances.push({
-      id: `AMB-${String(i).padStart(3, '0')}`,
-      unitNumber: `AMB-${String(i).padStart(3, '0')}`,
-      latitude: parseFloat(latitude.toFixed(6)),
-      longitude: parseFloat(longitude.toFixed(6)),
-      status: status,
-      assignedAlertId: status === 'BUSY' ? `ALERT-${Date.now()}-${i}` : null,
-      lastUpdateTime: new Date(Date.now() - Math.random() * 60 * 60 * 1000) // Random time in last hour
-    });
-  }
+  // Create 2 ambulances per city (10 total)
+  CITY_CENTERS.forEach(city => {
+    for (let i = 0; i < 2; i++) {
+      // Spread ambulances in a ~15km radius around city center
+      const angle = (i * 180) * (Math.PI / 180); // Distribute in a circle
+      const radius = 0.05 + Math.random() * 0.1; // 0.05 to 0.15 degrees (~5-15km)
+      
+      const latitude = city.lat + radius * Math.cos(angle) + (Math.random() - 0.5) * 0.03;
+      const longitude = city.lng + radius * Math.sin(angle) + (Math.random() - 0.5) * 0.03;
+      
+      // Most ambulances are available, but some might be busy
+      const status = ambulanceId <= 8 ? 'AVAILABLE' : 'BUSY';
+      
+      ambulances.push({
+        id: `AMB-${String(ambulanceId).padStart(3, '0')}`,
+        unitNumber: `AMB-${String(ambulanceId).padStart(3, '0')}`,
+        latitude: parseFloat(latitude.toFixed(6)),
+        longitude: parseFloat(longitude.toFixed(6)),
+        status: status,
+        assignedAlertId: status === 'BUSY' ? `ALERT-${Date.now()}-${ambulanceId}` : null,
+        lastUpdateTime: new Date(Date.now() - Math.random() * 60 * 60 * 1000), // Random time in last hour
+        city: city.name
+      });
+      
+      ambulanceId++;
+    }
+  });
   
   return ambulances;
 }
@@ -65,7 +77,7 @@ async function seedAmbulances() {
     
     // Display each ambulance
     savedAmbulances.forEach(amb => {
-      console.log(`   ${amb.unitNumber}: ${amb.status}`);
+      console.log(`   ${amb.unitNumber}: ${amb.status} (${amb.city || 'Unknown'})`);
       console.log(`      Location: (${amb.latitude.toFixed(6)}, ${amb.longitude.toFixed(6)})`);
     });
     
