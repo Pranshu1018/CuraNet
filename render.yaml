@@ -1,0 +1,59 @@
+services:
+  # Backend API Service
+  - type: web
+    name: curanet-backend
+    env: node
+    repo: https://github.com/yourusername/curanet.git
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FIREBASE_DATABASE_URL
+        value: https://medisync-c2ace-default-rtdb.asia-southeast1.firebasedatabase.app
+      - key: FIREBASE_PROJECT_ID
+        value: medisync-c2ace
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  # Frontend Application
+  - type: web
+    name: curanet-frontend
+    env: static
+    repo: https://github.com/yourusername/curanet.git
+    rootDir: frontend/dist
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_SUPABASE_URL
+        value: https://hoqzcbiycjnktmvpgfge.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcXNyZSI6ImFub24iLCAxNjg4Mzc3N30.GmOx5yCAXojsanbYg-65_kOgsQcL0XCDsOzrYX9dZHA
+      - key: VITE_FIREBASE_API_KEY
+        value: AIzaSyAJ2WW7xDNdEX8EDD29_KjeDiQOEjydUmk
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        value: medisync-c2ace.firebaseapp.com
+      - key: VITE_FIREBASE_DATABASE_URL
+        value: https://medisync-c2ace-default-rtdb.asia-southeast1.firebasedatabase.app
+      - key: VITE_FIREBASE_PROJECT_ID
+        value: medisync-c2ace
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        value: medisync-c2ace.firebasestorage.app
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        value: "604636007846"
+      - key: VITE_FIREBASE_APP_ID
+        value: 1:604636007846:web:17511bdb2ac7313f09d367
+      - key: VITE_FIREBASE_MEASUREMENT_ID
+        value: G-4PCFWDQJS5
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://curanet-backend.onrender.com/api/*
+    autoDeploy: true
