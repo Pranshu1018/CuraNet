@@ -16,7 +16,7 @@ const InventoryTest = () => {
 
   useEffect(() => {
     // Establish socket connection for live system-wide alerts
-    const socket = io('http://localhost:5000');
+    const socket = io('https://curanet-1.onrender.com');
     
     socket.on('inventory_alert', (alert) => {
       setAlerts(prev => [...prev, { ...alert, type: 'expiry', id: Date.now() }]);
@@ -44,7 +44,7 @@ const InventoryTest = () => {
 
   const fetchHospitals = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/hospital/heatmap-data');
+      const response = await axios.get('https://curanet-1.onrender.com/api/hospital/heatmap-data');
       setHospitals(response.data);
     } catch (error) {
       console.error('Error fetching hospitals:', error);

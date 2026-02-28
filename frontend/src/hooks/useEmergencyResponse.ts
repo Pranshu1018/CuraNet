@@ -30,8 +30,8 @@ interface EmergencyResponse {
   ambulance: Ambulance;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://curanet-1.onrender.com';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://curanet-1.onrender.com';
 
 /**
  * Hook for handling emergency response
