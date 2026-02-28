@@ -3,7 +3,7 @@ services:
   - type: web
     name: curanet-backend
     env: node
-    repo: https://github.com/yourusername/curanet.git
+    repo: https://github.com/Pranshu1018/CuraNet.git
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -27,7 +27,7 @@ services:
   - type: web
     name: curanet-frontend
     env: static
-    repo: https://github.com/yourusername/curanet.git
+    repo: https://github.com/Pranshu1018/CuraNet.git
     rootDir: frontend/dist
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./dist
